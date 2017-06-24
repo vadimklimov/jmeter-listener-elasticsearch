@@ -1,4 +1,4 @@
-package com.doc.jmeter.listeners;
+package com.doc.jmeter.listeners.elasticsearch;
 
 import java.io.IOException;
 import java.time.Instant;
