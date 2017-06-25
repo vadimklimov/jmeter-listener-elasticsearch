@@ -1,5 +1,5 @@
 
-# Elasticsearch Listener for Apache JMeter
+# Elasticsearch listener for Apache JMeter
 The listener plugin for Apache JMeter that enables delivery of samples' result data to Elasticsearch server using Elasticsearch API.
 
 Usage of the plugin is described in SAP Community blog https://blogs.sap.com/2016/04/06/load-testing-with-jmeter-test-results-visualization-using-kibana-dashboards/.
@@ -30,18 +30,20 @@ Dependeny declaration for Maven POM:
 
 
 ## Parameterization
-* **elasticsearch.protocol** - URI scheme (http or https) for accessing Elasticsearch server. Default: http.
-* **elasticsearch.host** - host for accessing Elasticsearch server.
-* **elasticsearch.port** - port for accessing Elasticsearch server. Default: 9200.
-* **elasticsearch.user** - user name for authentication of requests sent to Elasticsearch server in case basic authentication is used. Default: empty (no authentication).
-* **elasticsearch.password** - password for authentication of requests sent to Elasticsearch server in case basic authentication is used. Default: empty (no authentication).
-* **elasticsearch.index** - index to which documents containing sample results that are to be added on Elasticsearch server.
-* **elasticsearch.type** - document type of documents containing sample results that are to be added on Elasticsearch server.
-* **timezone.id** - timezone identifier. Default: GMT.
-* **result.attributes.excluded** - comma-separated names of sample result attributes that shall not be passed to Elasticsearch server. By default, all attributes are passed. Valid attributes' names: Timestamp, StartTime, EndTime, Time, Latency, ConnectTime, IdleTime, SampleLabel, GroupName, ThreadName, ResponseCode, IsResponseCodeOk, IsSuccessful, SampleCount, ErrorCount, ContentType, MediaType, DataType, RequestHeaders, ResponseHeaders, HeadersSize, SamplerData, ResponseMessage, ResponseData, BodySize, Bytes.
+|Parameter|Description|Default value|
+|---|---|---|
+|elasticsearch.protocol|URI scheme (http or https) for accessing Elasticsearch server|http|
+|elasticsearch.host|Host for accessing Elasticsearch server||
+|elasticsearch.port|Port for accessing Elasticsearch server|9200|
+|elasticsearch.user|User name for authentication of requests sent to Elasticsearch server in case basic authentication is used|Empty (no authentication)|
+|elasticsearch.password|Password for authentication of requests sent to Elasticsearch server in case basic authentication is used|Empty (no authentication)|
+|elasticsearch.index|Index to which documents containing sample results that are to be added on Elasticsearch server||
+|elasticsearch.type|Document type of documents containing sample results that are to be added on Elasticsearch server||
+|timezone.id|Timezone identifier|GMT|
+|result.attributes.excluded|Comma-separated names of sample result attributes that shall not be passed to Elasticsearch server. Valid attributes' names: Timestamp, StartTime, EndTime, Time, Latency, ConnectTime, IdleTime, SampleLabel, GroupName, ThreadName, ResponseCode, IsResponseCodeOk, IsSuccessful, SampleCount, ErrorCount, ContentType, MediaType, DataType, RequestHeaders, ResponseHeaders, HeadersSize, SamplerData, ResponseMessage, ResponseData, BodySize, Bytes|All attributes are passed|
 
 
-## Additional Notes
+## Additional notes
 The listener plugin has been tested with JMeter version 3.2 running on JRE version 1.8 in conjunction with Elasticsearch server version 5.4.2.
 
 In recent versions of JMeter API, several methods related to sample result processing, have been deprecated and newer replacing methods were introduced. The current version of the listener plugin makes use of the latter methods.
