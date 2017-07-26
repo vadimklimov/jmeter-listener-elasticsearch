@@ -1,6 +1,10 @@
-package com.doc.jmeter.listeners.elasticsearch;
+package com.doc.jmeter.listeners.elasticsearch.com.doc.jmeter.listeners.elasticsearch;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -9,6 +13,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
@@ -45,6 +54,7 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 	private static final String PARAMETER_NAME_ELASTICSEARCH_TYPE = "elasticsearch.type";
 	private static final String PARAMETER_NAME_TIMEZONE_ID = "timezone.id";
 	private static final String PARAMETER_NAME_RESULT_EXCLUDED_ATTRIBUTES = "result.attributes.excluded";
+	private static final String PARAMETER_NAME_ELASTICSEARCH_CONN_SSL_TRUST_ALL_CERTS = "elasticsearch.connection.trustAllSslCertificates";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchListener.class);
 
@@ -65,6 +75,7 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 	private String esType;
 	private String tzId;
 	private String srExcludedAttributes;
+	private boolean esConnSslTrustAllCerts;
 
 	private RestClient esClient = null;;
 	private boolean isEsPingOk = false;
@@ -93,6 +104,7 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 		parameters.addArgument(PARAMETER_NAME_ELASTICSEARCH_TYPE, null);
 		parameters.addArgument(PARAMETER_NAME_TIMEZONE_ID, "GMT");
 		parameters.addArgument(PARAMETER_NAME_RESULT_EXCLUDED_ATTRIBUTES, null);
+		parameters.addArgument(PARAMETER_NAME_ELASTICSEARCH_CONN_SSL_TRUST_ALL_CERTS, "false");
 
 		return parameters;
 
@@ -154,6 +166,9 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 						.trim();
 		esPort = Integer.valueOf(context.getParameter(PARAMETER_NAME_ELASTICSEARCH_PORT)
 										.trim());
+		esConnSslTrustAllCerts = Boolean.valueOf(
+				context	.getParameter(PARAMETER_NAME_ELASTICSEARCH_CONN_SSL_TRUST_ALL_CERTS)
+						.trim());
 		esUser = context.getParameter(PARAMETER_NAME_ELASTICSEARCH_USER)
 						.trim();
 		esPassword = context.getParameter(PARAMETER_NAME_ELASTICSEARCH_PASSWORD)
@@ -174,6 +189,10 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 			resultExcludedAttributes.retainAll(SAMPLE_RESULT_ALL_ATTRIBUTES);
 			LOGGER.debug("Possible sample result attributes: " + SAMPLE_RESULT_ALL_ATTRIBUTES);
 			LOGGER.debug("Excluded sample result attributes: " + resultExcludedAttributes);
+		}
+
+		if (esConnSslTrustAllCerts) {
+			connTrustAllSslCerts();
 		}
 
 		if (esUser != null && esUser.length() > 0 && esPassword != null && esPassword.length() > 0) {
@@ -234,14 +253,12 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 				switch (attributeName) {
 				case "Timestamp":
 					sampleResult4ExternalJson.put(attributeName,
-							LocalDateTime	.ofInstant(Instant.ofEpochMilli(sampleResult.getTimeStamp()),
-									ZoneId.of(tzId))
+							LocalDateTime	.ofInstant(Instant.ofEpochMilli(sampleResult.getTimeStamp()), ZoneId.of(tzId))
 											.toString());
 					break;
 				case "StartTime":
 					sampleResult4ExternalJson.put(attributeName,
-							LocalDateTime	.ofInstant(Instant.ofEpochMilli(sampleResult.getStartTime()),
-									ZoneId.of(tzId))
+							LocalDateTime	.ofInstant(Instant.ofEpochMilli(sampleResult.getStartTime()), ZoneId.of(tzId))
 											.toString());
 					break;
 				case "EndTime":
@@ -332,6 +349,35 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 			return sampleResult4ExternalJson.toString();
 		} else {
 			return null;
+		}
+
+	}
+
+	private void connTrustAllSslCerts() {
+
+		LOGGER.debug("Enabling trust all SSL certificates when establishing connection to Elasticsearch server");
+		TrustManager[] trustCertificates = new TrustManager[] { new X509TrustManager() {
+			@Override
+			public void checkClientTrusted(X509Certificate[] certs, String authType) {
+			}
+
+			@Override
+			public void checkServerTrusted(X509Certificate[] certs, String authType) {
+			}
+
+			@Override
+			public X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+		} };
+
+		try {
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(null, trustCertificates, new SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+		} catch (NoSuchAlgorithmException | KeyManagementException e) {
+			LOGGER.error("Elasticsearch connection - trust all SSL certificates: Failed");
+			LOGGER.error(ExceptionUtils.getStackTrace(e));
 		}
 
 	}
