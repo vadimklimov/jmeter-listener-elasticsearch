@@ -30,6 +30,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.jmeter.config.Arguments;
@@ -56,7 +57,9 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 	private static final String PARAMETER_NAME_ELASTICSEARCH_TYPE = "elasticsearch.type";
 	private static final String PARAMETER_NAME_TIMEZONE_ID = "timezone.id";
 	private static final String PARAMETER_NAME_RESULT_EXCLUDED_ATTRIBUTES = "result.attributes.excluded";
-	private static final String PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_URL = "elasticsearch.connection.proxyUrl";
+	private static final String PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_URL = "elasticsearch.connection.proxy.url";
+	private static final String PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_USER = "elasticsearch.connection.proxy.user";
+	private static final String PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_PASSWORD = "elasticsearch.connection.proxy.password";
 	private static final String PARAMETER_NAME_ELASTICSEARCH_CONN_SSL_TRUST_ALL_CERTS = "elasticsearch.connection.trustAllSslCertificates";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchListener.class);
@@ -78,11 +81,12 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 	private String esType;
 	private String tzId;
 	private String srExcludedAttributes;
-	private boolean esConnUseProxy;
 	private String esConnProxyUrl;
 	String esConnProxyProtocol;
 	String esConnProxyHost;
 	int esConnProxyPort;
+	private String esConnProxyUser;
+	private String esConnProxyPassword;
 	private boolean esConnSslTrustAllCerts;
 
 	private RestClient esClient = null;;
@@ -113,6 +117,8 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 		parameters.addArgument(PARAMETER_NAME_TIMEZONE_ID, "GMT");
 		parameters.addArgument(PARAMETER_NAME_RESULT_EXCLUDED_ATTRIBUTES, null);
 		parameters.addArgument(PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_URL, null);
+		parameters.addArgument(PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_USER, null);
+		parameters.addArgument(PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_PASSWORD, null);
 		parameters.addArgument(PARAMETER_NAME_ELASTICSEARCH_CONN_SSL_TRUST_ALL_CERTS, "false");
 
 		return parameters;
@@ -191,6 +197,10 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 										.trim();
 		esConnProxyUrl = context.getParameter(PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_URL)
 								.trim();
+		esConnProxyUser = context	.getParameter(PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_USER)
+									.trim();
+		esConnProxyPassword = context	.getParameter(PARAMETER_NAME_ELASTICSEARCH_CONN_PROXY_PASSWORD)
+										.trim();
 		esConnSslTrustAllCerts = Boolean.valueOf(
 				context	.getParameter(PARAMETER_NAME_ELASTICSEARCH_CONN_SSL_TRUST_ALL_CERTS)
 						.trim());
@@ -208,64 +218,50 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 			connTrustAllSslCerts();
 		}
 
-		if (esConnProxyUrl != null && esConnProxyUrl.length() > 0) {
-			esConnUseProxy = true;
+		HttpClientConfigCallback esHttpClientConfig = new RestClientBuilder.HttpClientConfigCallback() {
+			@Override
+			public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
 
-			try {
-				URL esConnProxy = new URL(esConnProxyUrl);
-				esConnProxyProtocol = esConnProxy.getProtocol();
-				esConnProxyHost = esConnProxy.getHost();
-				esConnProxyPort = esConnProxy.getPort();
-			} catch (MalformedURLException e) {
-				LOGGER.error("Error when parsing proxy URL - disabling proxy usage");
-				LOGGER.error(ExceptionUtils.getStackTrace(e));
-				esConnUseProxy = false;
+				CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+
+				if (esUser != null && esUser.length() > 0 && esPassword != null && esPassword.length() > 0) {
+					LOGGER.debug("Using basic authentication when sending requests to Elasticsearch server");
+					credentialsProvider.setCredentials(new AuthScope(esHost, esPort),
+							new UsernamePasswordCredentials(esUser, esPassword));
+				}
+
+				if (esConnProxyUrl != null && esConnProxyUrl.length() > 0) {
+					LOGGER.debug("Using proxy when sending requests to Elasticsearch server");
+
+					try {
+						URL esConnProxy = new URL(esConnProxyUrl);
+						esConnProxyProtocol = esConnProxy.getProtocol();
+						esConnProxyHost = esConnProxy.getHost();
+						esConnProxyPort = esConnProxy.getPort();
+
+						httpClientBuilder.setProxy(new HttpHost(esConnProxyHost, esConnProxyPort, esConnProxyProtocol));
+
+						if (esConnProxyUser != null && esConnProxyUser.length() > 0 && esConnProxyPassword != null
+								&& esConnProxyPassword.length() > 0) {
+							credentialsProvider.setCredentials(new AuthScope(esConnProxyHost, esConnProxyPort),
+									new UsernamePasswordCredentials(esConnProxyUser, esConnProxyPassword));
+						}
+
+						httpClientBuilder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
+
+					} catch (MalformedURLException e) {
+						LOGGER.error("Error when parsing proxy URL - disabling proxy usage");
+						LOGGER.error(ExceptionUtils.getStackTrace(e));
+					}
+				}
+
+				httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+
+				return httpClientBuilder;
 			}
-		} else {
-			esConnUseProxy = false;
-		}
+		};
 
-		if (esUser != null && esUser.length() > 0 && esPassword != null && esPassword.length() > 0) {
-			// Basic authentication
-			LOGGER.debug("Using basic authentication when sending requests to Elasticsearch server");
-			CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-			credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUser, esPassword));
-
-			HttpClientConfigCallback esHttpClientConfig = new RestClientBuilder.HttpClientConfigCallback() {
-				@Override
-				public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-
-					httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-
-					if (esConnUseProxy) {
-						LOGGER.debug("Using proxy when sending requests to Elasticsearch server");
-						httpClientBuilder.setProxy(new HttpHost(esConnProxyHost, esConnProxyPort, esConnProxyProtocol));
-					}
-
-					return httpClientBuilder;
-				}
-			};
-
-			esClientBuilder.setHttpClientConfigCallback(esHttpClientConfig);
-		} else {
-			// No authentication
-			LOGGER.debug("Using no authentication when sending requests to Elasticsearch server");
-
-			HttpClientConfigCallback esHttpClientConfig = new RestClientBuilder.HttpClientConfigCallback() {
-				@Override
-				public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-
-					if (esConnUseProxy) {
-						LOGGER.debug("Using proxy when sending requests to Elasticsearch server");
-						httpClientBuilder.setProxy(new HttpHost(esConnProxyHost, esConnProxyPort, esConnProxyProtocol));
-					}
-
-					return httpClientBuilder;
-				}
-			};
-
-			esClientBuilder.setHttpClientConfigCallback(esHttpClientConfig);
-		}
+		esClientBuilder.setHttpClientConfigCallback(esHttpClientConfig);
 
 		esClient = esClientBuilder.build();
 
