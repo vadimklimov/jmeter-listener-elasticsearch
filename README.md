@@ -14,7 +14,7 @@ Usage of the plugin is described in SAP Community blog https://blogs.sap.com/201
 
 Documentation: https://www.elastic.co/guide/en/elasticsearch/client/java-rest/index.html
 
-Dependeny declaration for Maven POM:
+Dependency declaration for Maven POM:
 
 <pre><code>&lt;dependency&gt;
 	&lt;groupId&gt;org.elasticsearch.client&lt;/groupId&gt;
