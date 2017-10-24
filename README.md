@@ -35,13 +35,13 @@ Dependeny declaration for Maven POM:
 |elasticsearch.url|Elasticsearch server URL in format &lt;scheme&gt;://&lt;host&gt;:&lt;port&gt;|http://localhost:9200|
 |elasticsearch.index|Index to which documents containing sample results are to be added on Elasticsearch server||
 |elasticsearch.type|Document type of documents containing sample results that are to be added on Elasticsearch server||
-|elasticsearch.authenticationMethod|In case authentication is required at Elasticsearch server, authentication method to be used. If no authentication is required, the field value shall be left empty. Currently supported authentication methods: BASIC|Empty (no authentication)|
+|elasticsearch.authenticationMethod|In case authentication is required at Elasticsearch server, authentication method to be used. If no authentication is required, the parameter value shall be left empty. Currently supported authentication methods: BASIC|Empty (no authentication)|
 |elasticsearch.user|User name for authentication of requests sent to Elasticsearch server. Applicable to basic authentication method||
 |elasticsearch.password|Password for authentication of requests sent to Elasticsearch server. Applicable to basic authentication method||
 |timezone.id|Timezone identifier|GMT|
 |result.attributes.excluded|Comma-separated names of sample result attributes that shall not be passed to Elasticsearch server. Valid attributes' names: Timestamp, StartTime, EndTime, Time, Latency, ConnectTime, IdleTime, SampleLabel, GroupName, ThreadName, ResponseCode, IsResponseCodeOk, IsSuccessful, SampleCount, ErrorCount, ContentType, MediaType, DataType, RequestHeaders, ResponseHeaders, HeadersSize, SamplerData, ResponseMessage, ResponseData, BodySize, Bytes|All attributes are passed|
 |proxy.url|In case connection to Elasticsearch server is over proxy server, proxy URL in format &lt;scheme&gt;://&lt;host&gt;:&lt;port&gt;|Empty (no proxy)|
-|proxy.authenticationMethod|In case authentication is required at proxy server, authentication method to be used. If no authentication is required, the field value shall be left empty. Currently supported authentication methods: BASIC, NTLM|Empty (no authentication)|
+|proxy.authenticationMethod|In case authentication is required at proxy server, authentication method to be used. If no authentication is required, the parameter value shall be left empty. Currently supported authentication methods: BASIC, NTLM|Empty (no authentication)|
 |proxy.user|User name for authentication of requests sent over proxy server. Applicable to basic and NTLM authentication methods||
 |proxy.password|Password for authentication of requests sent over proxy server. Applicable to basic and NTLM authentication methods||
 |proxy.workstation|Workstation name for authentication of requests sent over proxy server. Applicable to NTLM authentication method. If no value is provided, local host name of the machine will be determined and used||
