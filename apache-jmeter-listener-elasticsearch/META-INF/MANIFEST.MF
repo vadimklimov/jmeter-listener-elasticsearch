@@ -1,0 +1,55 @@
+Manifest-Version: 1.0
+Class-Path: poi-ooxml-4.0.1.jar xalan-2.7.2.jar sis-netcdf-0.8.jar log
+ 4j-core-2.11.1.jar uimaj-core-3.0.1.jar ehcache-core-2.6.2.jar stax2-
+ api-3.1.4.jar log4j-api-2.11.1.jar jodd-log-5.0.6.jar bcmail-jdk15on-
+ 1.60.jar commons-collections4-4.2.jar ApacheJMeter_core-5.1.jar boile
+ rpipe-1.1.0.jar httpservices-4.5.5.jar jaxb-runtime-2.3.1.jar rhino-1
+ .7.10.jar hamcrest-core-1.3.jar vorbis-java-core-0.8.jar bzip2-0.9.1.
+ jar commons-lang-2.6.jar bsf-2.4.0.jar procyon-compilertools-0.5.32.j
+ ar jodd-props-5.0.6.jar bcprov-jdk15on-1.60.jar jaxb-api-2.3.1.jar co
+ mmons-io-2.6.jar junit-4.12.jar ph-commons-9.2.1.jar pdfbox-tools-2.0
+ .13.jar guava-17.0.jar commons-codec-1.11.jar unit-api-1.0.jar jackce
+ ss-encrypt-2.1.4.jar commons-csv-1.6.jar xmlpull-1.1.3.1.jar accessor
+ s-smart-1.2.jar log4j-slf4j-impl-2.11.1.jar httpcore-4.4.11.jar sis-r
+ eferencing-0.8.jar txw2-2.3.1.jar jcommander-1.35.jar sis-metadata-0.
+ 8.jar caffeine-2.6.2.jar jdom2-2.0.6.jar jbig2-imageio-3.0.2.jar jcl-
+ over-slf4j-1.7.25.jar bsh-2.0b6.jar javax.ws.rs-api-2.1.1.jar log4j-1
+ .2.17.jar cdm-4.5.5.jar c3p0-0.9.1.1.jar httpasyncclient-4.1.4.jar xm
+ lschema-core-2.2.3.jar jackcess-2.1.12.jar commons-jexl-2.1.1.jar jci
+ p-annotations-1.0.jar mail-1.5.0-b01.jar log4j-1.2-api-2.11.1.jar rom
+ e-1.12.0.jar json-path-2.4.0.jar Saxon-HE-9.9.1-1.jar commons-compres
+ s-1.18.jar jtidy-r938.jar jsoup-1.11.3.jar jodd-core-5.0.6.jar common
+ s-text-1.6.jar xercesImpl-2.12.0.jar commons-dbcp2-2.5.0.jar quartz-2
+ .2.0.jar vorbis-java-tika-0.8.jar poi-4.0.1.jar oro-2.0.8.jar procyon
+ -core-0.5.32.jar elasticsearch-rest-client-6.5.1.jar commons-pool2-2.
+ 6.0.jar commons-logging-1.2.jar joda-time-2.2.jar juniversalchardet-1
+ .0.3.jar sentiment-analysis-parser-0.1.jar commons-jexl3-3.1.jar dnsj
+ ava-2.1.8.jar jackson-core-2.9.8.jar apache-mime4j-core-0.8.2.jar cxf
+ -rt-frontend-jaxrs-3.2.7.jar istack-commons-runtime-3.0.7.jar sis-fea
+ ture-0.8.jar jodd-lagarto-5.0.6.jar poi-ooxml-schemas-4.0.1.jar apach
+ e-mime4j-dom-0.8.2.jar commons-lang3-3.8.1.jar json-simple-1.1.1.jar 
+ sis-utility-0.8.jar uimafit-core-2.4.0.jar json-smart-2.3.jar pdfbox-
+ 2.0.13.jar jackson-annotations-2.9.8.jar jackson-databind-2.9.8.jar j
+ unrar-2.0.0.jar mongo-java-driver-2.11.3.jar parso-2.0.10.jar poi-scr
+ atchpad-4.0.1.jar slf4j-log4j12-1.7.25.jar cxf-core-3.2.7.jar sis-sto
+ rage-0.8.jar ph-css-6.1.1.jar jmatio-1.5.jar udunits-4.5.5.jar woodst
+ ox-core-5.0.3.jar opennlp-tools-1.9.0.jar jul-to-slf4j-1.7.25.jar ger
+ onimo-jms_1.1_spec-1.1.1.jar cxf-rt-transports-http-3.2.7.jar xmpcore
+ -5.1.3.jar serializer-2.7.2.jar groovy-all-2.4.16.jar xz-1.8.jar slf4
+ j-api-1.7.25.jar xstream-1.4.11.jar netcdf4-4.5.5.jar tagsoup-1.2.1.j
+ ar gson-2.8.5.jar commons-exec-1.3.jar activation-1.1.jar freemarker-
+ 2.3.28.jar xml-apis-1.4.01.jar metadata-extractor-2.11.0.jar protobuf
+ -java-2.5.0.jar javax.annotation-api-1.3.2.jar ApacheJMeter_component
+ s-5.1.jar httpcore-nio-4.4.11.jar jorphan-5.1.jar jcharts-0.7.5.jar F
+ astInfoset-1.2.15.jar stax-ex-1.8.jar cxf-rt-rs-client-3.2.7.jar open
+ json-1.0.10.jar dec-0.1.2.jar rome-utils-1.12.0.jar fontbox-2.0.13.ja
+ r jempbox-1.8.16.jar xpp3_min-1.1.4c.jar jsr305-3.0.2.jar grib-4.5.5.
+ jar geoapi-3.0.1.jar tika-parsers-1.20.jar jna-5.1.0.jar isoparser-1.
+ 1.22.jar commons-collections-3.2.2.jar bcpkix-jdk15on-1.60.jar xmlbea
+ ns-3.0.2.jar commons-math3-3.6.1.jar httpclient-4.5.7.jar curvesapi-1
+ .05.jar java-libpst-0.8.1.jar commons-net-3.6.jar javax.activation-1.
+ 2.0.jar rsyntaxtextarea-3.0.2.jar httpmime-4.5.7.jar tika-core-1.20.j
+ ar jai-imageio-core-1.4.0.jar xmlgraphics-commons-2.3.jar jhighlight-
+ 1.0.3.jar asm-7.0.jar javax.activation-api-1.2.0.jar
+Main-Class: 
+

@@ -64,7 +64,7 @@ import net.minidev.json.JSONObject;
 public class ElasticsearchListener extends AbstractBackendListenerClient {
 
 	private enum SampleResultDefaultAttributes {
-		Timestamp, StartTime, EndTime, Time, Latency, ConnectTime, IdleTime, SampleLabel, GroupName, ThreadName, ResponseCode, IsResponseCodeOk, IsSuccessful, SampleCount, ErrorCount, ContentType, MediaType, DataType, RequestHeaders, ResponseHeaders, HeadersSize, SamplerData, ResponseMessage, ResponseData, BodySize, Bytes
+		Timestamp, StartTime, EndTime, Time, Latency, ConnectTime, IdleTime, SampleLabel, GroupName, ThreadName, ResponseCode, IsResponseCodeOk, IsSuccessful, SampleCount, ErrorCount, ContentType, MediaType, DataType, RequestHeaders, ResponseHeaders, HeadersSize, SamplerData, ResponseMessage, ResponseData, BodySize, Bytes, RunGUID
 	};
 
 	private enum EsSupportedAuthMethods {
@@ -112,6 +112,9 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 	private RestClient esClient = null;
 
 	private boolean isError = false;
+
+	private String jmRunGUID = (System.getenv("RUN_ID") != null)
+			? System.getenv("RUN_ID"): UUID.randomUUID().toString();
 
 	/*
 	 * @Override public SampleResult createSampleResult(BackendListenerContext
@@ -661,6 +664,9 @@ public class ElasticsearchListener extends AbstractBackendListenerClient {
 							break;
 						case Bytes:
 							sampleResult4ExternalJson.put(attribute.toString(), sampleResult.getBytesAsLong());
+							break;
+						case RunGUID:
+							sampleResult4ExternalJson.put(attribute.toString(), this.jmRunGUID.toString());
 							break;
 						}
 					}
