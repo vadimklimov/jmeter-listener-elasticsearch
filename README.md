@@ -1,3 +1,5 @@
+> [!IMPORTANT]
+> This repository has been archived and is no longer maintained.
 
 # Elasticsearch listener for Apache JMeter
 The listener plugin for Apache JMeter that enables delivery of samples' result data to Elasticsearch server using Elasticsearch API.
